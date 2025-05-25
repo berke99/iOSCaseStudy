@@ -40,9 +40,8 @@ class AuthViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let user):
-                    self?.loggedInUser = user
                     self?.loginError = nil
-                    print(self?.loggedInUser)
+                    self!.saveToken(user: user)
                 case .failure(let error):
                     print("Login hatası: \(error)")
                     self?.loginError = error
@@ -52,5 +51,17 @@ class AuthViewModel: ObservableObject {
             }
         }
     }
+    
+    func saveToken(user: User){
+        UserDefaults.standard.set(user.token, forKey: "userToken")
+        print("Token başarıyla kaydedildi: \(user.token)")
+        self.loggedInUser = user
+    }
+    
+    func getToken() -> String? {
+        return UserDefaults.standard.string(forKey: "userToken")
+    }
+
+    
     
 }
