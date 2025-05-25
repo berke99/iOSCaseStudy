@@ -22,7 +22,7 @@ struct MainTabView: View {
             .tag(0)
 
             NavigationStack {
-                //FavoritesView()
+                FavoritesView()
             }
             .tabItem {
                 Label("Favorites", systemImage: "star.fill")

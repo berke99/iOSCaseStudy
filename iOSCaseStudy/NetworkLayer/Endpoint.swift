@@ -48,6 +48,7 @@ enum Endpoint {
     case movie
     case likeMovie(id: String, token: String)
     case unLikeMovie(id: String, token: String)
+    case likedMovieList(token: String)
 }
 
 // MARK: - EndpointProtocol Conformance
@@ -72,6 +73,8 @@ extension Endpoint: EndpointProtocol {
             return "/api/movies/like/\(id)"
         case .unLikeMovie(let id, _):
             return "/api/movies/unlike/\(id)"
+        case .likedMovieList:
+            return "/api/users/liked-movies"
         }
     }
 
@@ -79,14 +82,14 @@ extension Endpoint: EndpointProtocol {
         switch self {
         case .registerUser, .loginUser, .likeMovie, .unLikeMovie:
             return .post
-        case .currentUser, .movie:
+        case .currentUser, .movie, .likedMovieList:
             return .get
         }
     }
     
     var headers: [String: String] {
         switch self {
-        case .currentUser(let token), .likeMovie(_, let token), .unLikeMovie(_, let token):
+        case .currentUser(let token), .likeMovie(_, let token), .unLikeMovie(_, let token), .likedMovieList(let token):
             return [
                 "Authorization": "Bearer \(token)",
                 "Accept": "application/json"
@@ -113,9 +116,7 @@ extension Endpoint: EndpointProtocol {
                 "email": email,
                 "password": password
             ]
-        case .currentUser(token: let token):
-            return nil
-        case .movie, .likeMovie, .unLikeMovie:
+        case .movie, .likeMovie, .unLikeMovie, .likedMovieList, .currentUser:
             return nil
         }
     }
