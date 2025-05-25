@@ -9,14 +9,21 @@ import SwiftUI
 
 struct MovieView: View {
     //MARK: - Properties
+    @StateObject var movieVM = MovieViewModel()
+    
     
     //MARK: - Views
     var body: some View {
         NavigationStack{
             VStack{
-                
+                List(movieVM.movies ?? []) { movie in
+                    MovieCard(movie: movie)
+                }
             }
             .navigationTitle(LocaleKeys.movieFeedTitle.rawValue)
+            .onAppear {
+                movieVM.getAllMovies()
+            }
         }
     }
     

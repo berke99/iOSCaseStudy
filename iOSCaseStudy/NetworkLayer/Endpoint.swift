@@ -45,6 +45,7 @@ enum Endpoint {
     case registerUser(name: String, surname: String, email: String, password: String)
     case loginUser(email: String, password: String)
     case currentUser(token: String)
+    case movie
 }
 
 // MARK: - EndpointProtocol Conformance
@@ -63,6 +64,8 @@ extension Endpoint: EndpointProtocol {
             return "/api/auth/login"
         case .currentUser:
             return "/api/auth/me"
+        case .movie:
+            return "/api/movies"
         }
     }
 
@@ -70,7 +73,7 @@ extension Endpoint: EndpointProtocol {
         switch self {
         case .registerUser, .loginUser:
             return .post
-        case .currentUser:
+        case .currentUser, .movie:
             return .get
         }
     }
@@ -105,6 +108,8 @@ extension Endpoint: EndpointProtocol {
                 "password": password
             ]
         case .currentUser(token: let token):
+            return nil
+        case .movie:
             return nil
         }
     }
