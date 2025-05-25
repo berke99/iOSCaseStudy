@@ -46,6 +46,8 @@ enum Endpoint {
     case loginUser(email: String, password: String)
     case currentUser(token: String)
     case movie
+    case likeMovie(id: String, token: String)
+    case unLikeMovie(id: String, token: String)
 }
 
 // MARK: - EndpointProtocol Conformance
@@ -66,12 +68,16 @@ extension Endpoint: EndpointProtocol {
             return "/api/auth/me"
         case .movie:
             return "/api/movies"
+        case .likeMovie(let id, _):
+            return "/api/movies/like/\(id)"
+        case .unLikeMovie(let id, _):
+            return "/api/movies/unlike/\(id)"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .registerUser, .loginUser:
+        case .registerUser, .loginUser, .likeMovie, .unLikeMovie:
             return .post
         case .currentUser, .movie:
             return .get
@@ -80,7 +86,7 @@ extension Endpoint: EndpointProtocol {
     
     var headers: [String: String] {
         switch self {
-        case .currentUser(let token):
+        case .currentUser(let token), .likeMovie(_, let token), .unLikeMovie(_, let token):
             return [
                 "Authorization": "Bearer \(token)",
                 "Accept": "application/json"
@@ -109,15 +115,14 @@ extension Endpoint: EndpointProtocol {
             ]
         case .currentUser(token: let token):
             return nil
-        case .movie:
+        case .movie, .likeMovie, .unLikeMovie:
             return nil
         }
     }
-
     var queryItems: [URLQueryItem]? {
         return nil
     }
-
+    
     func makeRequest() -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue

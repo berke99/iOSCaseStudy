@@ -9,8 +9,14 @@ import SwiftUI
 import Kingfisher
 
 struct MovieDetailView: View {
-    let movie: Movie
+    @StateObject var movieVM = MovieViewModel()
 
+    @State private var isLiked = false
+    @State private var isUnliked = false
+
+    let movie: Movie
+    
+    //MARK: - Functions
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
@@ -45,6 +51,34 @@ struct MovieDetailView: View {
                         .font(.body)
                         .padding(.top)
                 }
+
+                if let actors = movie.actors, !actors.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Oyuncular")
+                            .font(.headline)
+                            .padding(.bottom, 4)
+
+                        ForEach(actors, id: \.self) { actor in
+                            Text("• \(actor)")
+                                .font(.body)
+                        }
+                    }
+                    .padding(.top)
+                }
+
+                HStack{
+                    CButton(title: "Like") {
+                        if let movieId = movie.id{
+                            movieVM.likeMovie(id: String(movieId))
+                        }
+                    }
+                    
+                    CButton(title: "unLike") {
+                        if let movieId = movie.id{
+                            movieVM.unLikeMovie(id: String(movieId))
+                        }
+                    }
+                }
                 
                 Spacer()
             }
@@ -54,4 +88,5 @@ struct MovieDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 }
+
 

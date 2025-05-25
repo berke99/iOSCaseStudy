@@ -11,8 +11,17 @@ struct CButton: View {
     var title: String
     var action: () -> Void
     
+    @State private var isPressed = false
+    
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            isPressed = true
+            action()
+            // Kısa süre sonra rengini geri döndür
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                isPressed = false
+            }
+        }) {
             Text(title)
                 .fontWeight(.semibold)
                 .foregroundColor(.white)
@@ -20,7 +29,7 @@ struct CButton: View {
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.blue)
+                        .fill(isPressed ? Color.blue.opacity(0.6) : Color.blue)
                         .shadow(color: Color.blue.opacity(0.4), radius: 8, x: 0, y: 4)
                 )
                 .padding(.horizontal)
