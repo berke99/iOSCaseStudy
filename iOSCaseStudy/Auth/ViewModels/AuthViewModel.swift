@@ -23,6 +23,7 @@ class AuthViewModel: ObservableObject {
                 case .success(let user):
                     //print("Login başarılı, token: \(user)")
                     self?.loggedInUser = user
+                    self!.saveToken(user: user)
                     self?.loginError = nil
                 case .failure(let error):
                     print("Login hatası: \(error)")
@@ -41,6 +42,7 @@ class AuthViewModel: ObservableObject {
                 switch result {
                 case .success(let user):
                     self?.loginError = nil
+                    self?.loggedInUser = user
                     self!.saveToken(user: user)
                 case .failure(let error):
                     print("Login hatası: \(error)")
@@ -85,5 +87,4 @@ class AuthViewModel: ObservableObject {
         self.loggedInUser = nil
     }
 
-    
 }

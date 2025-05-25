@@ -11,7 +11,6 @@ struct MovieView: View {
     //MARK: - Properties
     @StateObject var movieVM = MovieViewModel()
     
-    
     //MARK: - Views
     var body: some View {
         NavigationStack{
