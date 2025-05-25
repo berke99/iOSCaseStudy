@@ -28,6 +28,14 @@ enum LocaleKeys: String{
     case signUpButton = "Sign Up"
     
     
+    // Movie
+    //
+    //
+    // // Movie Title
+    case movieFeedTitle = "Movies"
+    
+    
+    
     
     
 }
