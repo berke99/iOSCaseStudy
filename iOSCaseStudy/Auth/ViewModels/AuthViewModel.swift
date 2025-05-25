@@ -12,7 +12,9 @@ class AuthViewModel: ObservableObject {
     // MARK: - Properties
     @Published var loggedInUser: User?
     @Published var loginError: NetworkError?
-
+    @Published var currentUser: CurrentUser?
+    
+    
     // MARK: - Functions
     func loginUser(email: String, password: String) {
         let endpoint = Endpoint.loginUser(email: email, password: password)
@@ -63,6 +65,7 @@ class AuthViewModel: ObservableObject {
                 case .success(let user):
                     print("success")
                     print(user)
+                    self?.currentUser = user
                 case .failure(let error):
                     print("error")
                     print(error)

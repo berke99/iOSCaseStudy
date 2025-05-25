@@ -8,43 +8,47 @@
 import SwiftUI
 
 struct RegisterUserView: View {
-    //MARK: - Properties
     @StateObject private var authVM = AuthViewModel()
 
     @State private var name: String = ""
     @State private var surName: String = ""
     @State private var email: String = ""
     @State private var password: String = ""
-    
-    //MARK: - View
+
+    @State private var showMainTab = false
+
     var body: some View {
-        NavigationStack{
-            VStack(alignment: .leading, spacing: 16){
-                
-                // TextField'ler
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
                 CTextField(text: $name, placeholder: LocaleKeys.namePlaceholder.rawValue)
                 CTextField(text: $surName, placeholder: LocaleKeys.surNamePlaceholder.rawValue)
                 CTextField(text: $email, placeholder: LocaleKeys.emailPlaceholder.rawValue)
                     .keyboardType(.emailAddress)
                 CTextField(text: $password, placeholder: LocaleKeys.passwordPlaceholder.rawValue)
                 
-                // Buttonlar
                 CButton(title: LocaleKeys.signUpButton.rawValue) {
                     authVM.registerUser(name: name, surName: surName, email: email, password: password)
-                    
                 }
                 .padding(.vertical, 15)
-                
-                
-                
             }
             .navigationTitle(LocaleKeys.registerTitle.rawValue)
+            .fullScreenCover(isPresented: $showMainTab) {
+                MainTabView()
+            }
+            .onReceive(authVM.$loggedInUser) { user in
+                if user != nil {
+                    showMainTab = true
+                }
+            }
         }
-        
     }
-    
-    //MARK: - Functions
 }
+
+#Preview {
+    RegisterUserView()
+}
+
+
 
 #Preview {
     RegisterUserView()

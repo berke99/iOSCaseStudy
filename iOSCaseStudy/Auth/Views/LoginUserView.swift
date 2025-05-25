@@ -13,8 +13,8 @@ struct LoginUserView: View {
     @State private var navigateToRegister = false
     @State private var navigateToMovieView = false  // Yeni state
     
-    @State private var email: String = "john@example.com"
-    @State private var password: String = "password123"
+    @State private var email: String = "b1@gmail.com"
+    @State private var password: String = "123123"
     
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
@@ -41,7 +41,6 @@ struct LoginUserView: View {
                     EmptyView()
                 }
                 
-                // İşte burası: login başarılı olunca açılacak
                 NavigationLink(destination: MainTabView().navigationBarBackButtonHidden(true), isActive: $navigateToMovieView) {
                     EmptyView()
                 }
@@ -55,7 +54,6 @@ struct LoginUserView: View {
             }
             .onReceive(authVM.$loggedInUser) { user in
                 if user != nil {
-                    // Login başarılı, MovieView’a git
                     navigateToMovieView = true
                 }
             }
