@@ -44,7 +44,7 @@ protocol EndpointProtocol {
 enum Endpoint {
     case registerUser(name: String, surname: String, email: String, password: String)
     case loginUser(email: String, password: String)
-    // Yeni endpointler buraya eklenebilir
+    case currentUser(token: String)
 }
 
 // MARK: - EndpointProtocol Conformance
@@ -61,6 +61,8 @@ extension Endpoint: EndpointProtocol {
             return "/api/auth/register"
         case .loginUser:
             return "/api/auth/login"
+        case .currentUser:
+            return "/api/auth/me"
         }
     }
 
@@ -68,14 +70,24 @@ extension Endpoint: EndpointProtocol {
         switch self {
         case .registerUser, .loginUser:
             return .post
+        case .currentUser:
+            return .get
         }
     }
     
     var headers: [String: String] {
-        return [
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        ]
+        switch self {
+        case .currentUser(let token):
+            return [
+                "Authorization": "Bearer \(token)",
+                "Accept": "application/json"
+            ]
+        default:
+            return [
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            ]
+        }
     }
 
     var parameters: [String: Any]? {
@@ -92,6 +104,8 @@ extension Endpoint: EndpointProtocol {
                 "email": email,
                 "password": password
             ]
+        case .currentUser(token: let token):
+            return nil
         }
     }
 

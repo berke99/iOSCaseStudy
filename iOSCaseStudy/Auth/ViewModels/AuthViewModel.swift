@@ -52,6 +52,23 @@ class AuthViewModel: ObservableObject {
         }
     }
     
+    func getCurrentUser(token: String){
+        let endpoint = Endpoint.currentUser(token: token)
+        
+        NetworkManager.shared.request(endpoint){ [weak self] (result: Result<CurrentUser, NetworkError>) in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let user):
+                    print("success")
+                    print(user)
+                case .failure(let error):
+                    print("error")
+                    print(error)
+                }
+            }
+        }
+    }
+    
     func saveToken(user: User){
         UserDefaults.standard.set(user.token, forKey: "userToken")
         print("Token başarıyla kaydedildi: \(user.token)")
@@ -62,6 +79,11 @@ class AuthViewModel: ObservableObject {
         return UserDefaults.standard.string(forKey: "userToken")
     }
 
-    
+    func deleteToken() {
+        UserDefaults.standard.removeObject(forKey: "userToken")
+        print("Token başarıyla silindi.")
+        self.loggedInUser = nil
+    }
+
     
 }

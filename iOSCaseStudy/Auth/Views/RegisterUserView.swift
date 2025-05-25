@@ -35,6 +35,8 @@ struct RegisterUserView: View {
                 }
                 .padding(.vertical, 15)
                 
+                
+                
             }
             .navigationTitle(LocaleKeys.registerTitle.rawValue)
         }
