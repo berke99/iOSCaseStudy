@@ -16,6 +16,10 @@ struct LoginUserView: View {
     @State private var email: String = "john@example.com"
     @State private var password: String = "password123"
     
+    // Alert için state
+    @State private var showAlert: Bool = false
+    @State private var alertMessage: String = ""
+
     //MARK: - View
     var body: some View {
         
@@ -39,13 +43,6 @@ struct LoginUserView: View {
                             print("signUpButton tapped")
                             navigateToRegister = true
                         }
-                        
-                        if let user = authVM.loggedInUser {
-                            Text("Hoşgeldin, \(user.user)")
-                        } else if let error = authVM.loginError {
-                            Text("Hata: \(error)")
-                                .foregroundColor(.red)
-                        }
 
                     }
                     .padding(10)
@@ -58,8 +55,31 @@ struct LoginUserView: View {
                     
                 }
                 .navigationTitle(LocaleKeys.loginTitle.rawValue)
+                .onReceive(authVM.$loginError) { error in
+                    if let error = error {
+                        alertMessage = error.localizedDescription
+                        showAlert = true
+                    }
+                }
+                .onReceive(authVM.$loggedInUser) { user in
+                    if let user = user {
+                        print(user)
+                    }
+                }
+                
+                // Alert gösterimi
+                .alert(isPresented: $showAlert) {
+                    Alert(
+                        title: Text("Hata"),
+                        message: Text(alertMessage),
+                        dismissButton: .default(Text("Tamam")) {
+                            showAlert = false
+                        }
+                    )
+                }
+
         }
-    
+
     }
     
     //MARK: - Functions

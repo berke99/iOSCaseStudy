@@ -9,6 +9,8 @@ import SwiftUI
 
 struct RegisterUserView: View {
     //MARK: - Properties
+    @StateObject private var authVM = AuthViewModel()
+
     @State private var name: String = ""
     @State private var surName: String = ""
     @State private var email: String = ""
@@ -24,11 +26,12 @@ struct RegisterUserView: View {
                 CTextField(text: $surName, placeholder: LocaleKeys.surNamePlaceholder.rawValue)
                 CTextField(text: $email, placeholder: LocaleKeys.emailPlaceholder.rawValue)
                     .keyboardType(.emailAddress)
-                CTextField(text: $name, placeholder: LocaleKeys.passwordPlaceholder.rawValue)
+                CTextField(text: $password, placeholder: LocaleKeys.passwordPlaceholder.rawValue)
                 
                 // Buttonlar
                 CButton(title: LocaleKeys.signUpButton.rawValue) {
-                    print("üye ol")
+                    authVM.registerUser(name: name, surName: surName, email: email, password: password)
+                    
                 }
                 .padding(.vertical, 15)
                 

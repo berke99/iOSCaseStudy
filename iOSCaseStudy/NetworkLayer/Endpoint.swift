@@ -18,7 +18,7 @@ enum HTTPMethod: String {
 
 // MARK: - Network Error Enum
 
-enum NetworkError: Error {
+enum NetworkError: Error{
     case invalidURL
     case decodingFailed
     case serverError(statusCode: Int)
