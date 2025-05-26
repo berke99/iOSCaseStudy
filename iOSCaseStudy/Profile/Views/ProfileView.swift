@@ -37,6 +37,7 @@ struct ProfileView: View {
         .padding()
         .onAppear {
             token = UserDefaults.standard.string(forKey: "userToken")
+
             if let token = token {
                 authVM.getCurrentUser(token: token)
             }

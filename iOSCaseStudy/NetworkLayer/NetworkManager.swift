@@ -38,10 +38,13 @@ class NetworkManager{
                 return
             }
 
+            print("📦 JSON:", String(data: data, encoding: .utf8) ?? "N/A")
+
             do{
                 let decodedData = try JSONDecoder().decode(T.self, from: data)
                 completion(.success(decodedData))
             }catch{
+                print("❌ Decoding error:", error)
                 completion(.failure(.decodingFailed))
             }
             

@@ -58,8 +58,9 @@ class AuthViewModel: ObservableObject {
     
     func getCurrentUser(token: String){
         let endpoint = Endpoint.currentUser(token: token)
-        
+
         NetworkManager.shared.request(endpoint){ [weak self] (result: Result<CurrentUser, NetworkError>) in
+            
             DispatchQueue.main.async {
                 switch result {
                 case .success(let user):
