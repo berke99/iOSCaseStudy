@@ -14,7 +14,7 @@ struct CurrentUser: Codable {
     let createdAt: String
     let updatedAt: String
     let v: Int
-
+    
     enum CodingKeys: String, CodingKey {
         case id = "_id"
         case name
