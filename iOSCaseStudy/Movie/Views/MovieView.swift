@@ -6,21 +6,29 @@
 //
 
 import SwiftUI
+import SwiftUI
 
 struct MovieView: View {
-    //MARK: - Properties
-    
-    //MARK: - Views
+    // MARK: - Properties
+    @StateObject var movieVM = MovieViewModel()
+
+    // MARK: - Views
     var body: some View {
-        NavigationStack{
-            VStack{
-                
+        NavigationStack {
+            List(movieVM.movies ?? []) { movie in
+                NavigationLink(destination: MovieDetailView(movie: movie)) {
+                    MovieCard(movie: movie)
+                        .padding(.vertical, 4)
+                }
             }
+            .listStyle(.plain)
             .navigationTitle(LocaleKeys.movieFeedTitle.rawValue)
+            .onAppear {
+                movieVM.getAllMovies()
+            }
         }
     }
     
-    //MARK: - Functions
 }
 
 #Preview {

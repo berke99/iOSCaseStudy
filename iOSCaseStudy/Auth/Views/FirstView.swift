@@ -28,7 +28,7 @@ struct FirstView: View {
             }
         }
         .fullScreenCover(isPresented: $showMovieView) {
-            MovieView()
+            MainTabView()
         }
         .fullScreenCover(isPresented: $showLoginView) {
             LoginUserView()
@@ -39,3 +39,6 @@ struct FirstView: View {
 #Preview {
     FirstView()
 }
+
+
+

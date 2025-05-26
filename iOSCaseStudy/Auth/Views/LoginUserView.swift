@@ -8,82 +8,66 @@
 import SwiftUI
 
 struct LoginUserView: View {
-    //MARK: - Properties
     @StateObject private var authVM = AuthViewModel()
     
     @State private var navigateToRegister = false
-
-    @State private var email: String = "john@example.com"
-    @State private var password: String = "password123"
+    @State private var navigateToMovieView = false  // Yeni state
     
-    // Alert için state
+    @State private var email: String = ""
+    @State private var password: String = ""
+    
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
 
-    //MARK: - View
     var body: some View {
-        
         NavigationStack {
-        
-                VStack(alignment: .leading, spacing: 16){
-                    
-                    // TextField'ler
-                    CTextField(text: $email, placeholder: LocaleKeys.emailPlaceholder.rawValue)
-                        .keyboardType(.emailAddress)
-                    CTextField(text: $password, placeholder: LocaleKeys.passwordPlaceholder.rawValue)
-                        .keyboardType(.default)
-                    
-                    // Buttonlar
-                    HStack(){
-                        CButton(title: LocaleKeys.loginButton.rawValue) {
-                            print("loginButton tapped")
-                            authVM.loginUser(email: email, password: password)
-                        }
-                        CButton(title: LocaleKeys.signUpButton.rawValue) {
-                            print("signUpButton tapped")
-                            navigateToRegister = true
-                        }
-
+            VStack(alignment: .leading, spacing: 16) {
+                CTextField(text: $email, placeholder: LocaleKeys.emailPlaceholder.rawValue)
+                    .keyboardType(.emailAddress)
+                CTextField(text: $password, placeholder: LocaleKeys.passwordPlaceholder.rawValue)
+                    .keyboardType(.default)
+                
+                HStack {
+                    CButton(title: LocaleKeys.loginButton.rawValue) {
+                        authVM.loginUser(email: email, password: password)
                     }
-                    .padding(10)
-
-                    NavigationLink(
-                        destination: RegisterUserView(),
-                        isActive: $navigateToRegister,
-                        label: { EmptyView() }
-                    )
-                    
-                }
-                .navigationTitle(LocaleKeys.loginTitle.rawValue)
-                .onReceive(authVM.$loginError) { error in
-                    if let error = error {
-                        alertMessage = error.localizedDescription
-                        showAlert = true
+                    CButton(title: LocaleKeys.signUpButton.rawValue) {
+                        navigateToRegister = true
                     }
                 }
-                .onReceive(authVM.$loggedInUser) { user in
-                    if let user = user {
-                        print(user)
-                    }
+                .padding(10)
+
+                NavigationLink(destination: RegisterUserView(), isActive: $navigateToRegister) {
+                    EmptyView()
                 }
                 
-                // Alert gösterimi
-                .alert(isPresented: $showAlert) {
-                    Alert(
-                        title: Text("Hata"),
-                        message: Text(alertMessage),
-                        dismissButton: .default(Text("Tamam")) {
-                            showAlert = false
-                        }
-                    )
+                NavigationLink(destination: MainTabView().navigationBarBackButtonHidden(true), isActive: $navigateToMovieView) {
+                    EmptyView()
                 }
-
+            }
+            .navigationTitle(LocaleKeys.loginTitle.rawValue)
+            .onReceive(authVM.$loginError) { error in
+                if let error = error {
+                    alertMessage = error.localizedDescription
+                    showAlert = true
+                }
+            }
+            .onReceive(authVM.$loggedInUser) { user in
+                if user != nil {
+                    navigateToMovieView = true
+                }
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Hata"),
+                    message: Text(alertMessage),
+                    dismissButton: .default(Text("Tamam")) {
+                        showAlert = false
+                    }
+                )
+            }
         }
-
     }
-    
-    //MARK: - Functions
-    
 }
 
 #Preview {

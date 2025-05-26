@@ -12,7 +12,9 @@ class AuthViewModel: ObservableObject {
     // MARK: - Properties
     @Published var loggedInUser: User?
     @Published var loginError: NetworkError?
-
+    @Published var currentUser: CurrentUser?
+    
+    
     // MARK: - Functions
     func loginUser(email: String, password: String) {
         let endpoint = Endpoint.loginUser(email: email, password: password)
@@ -23,6 +25,7 @@ class AuthViewModel: ObservableObject {
                 case .success(let user):
                     //print("Login başarılı, token: \(user)")
                     self?.loggedInUser = user
+                    self!.saveToken(user: user)
                     self?.loginError = nil
                 case .failure(let error):
                     print("Login hatası: \(error)")
@@ -41,6 +44,7 @@ class AuthViewModel: ObservableObject {
                 switch result {
                 case .success(let user):
                     self?.loginError = nil
+                    self?.loggedInUser = user
                     self!.saveToken(user: user)
                 case .failure(let error):
                     print("Login hatası: \(error)")
@@ -54,13 +58,15 @@ class AuthViewModel: ObservableObject {
     
     func getCurrentUser(token: String){
         let endpoint = Endpoint.currentUser(token: token)
-        
+
         NetworkManager.shared.request(endpoint){ [weak self] (result: Result<CurrentUser, NetworkError>) in
+            
             DispatchQueue.main.async {
                 switch result {
                 case .success(let user):
                     print("success")
                     print(user)
+                    self?.currentUser = user
                 case .failure(let error):
                     print("error")
                     print(error)
@@ -85,5 +91,4 @@ class AuthViewModel: ObservableObject {
         self.loggedInUser = nil
     }
 
-    
 }

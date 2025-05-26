@@ -13,7 +13,7 @@ enum HTTPMethod: String {
     case get = "GET"
     case post = "POST"
     case delete = "DELETE"
-    case patch = "PATCH"
+    case put = "PUT"
 }
 
 // MARK: - Network Error Enum
@@ -45,6 +45,11 @@ enum Endpoint {
     case registerUser(name: String, surname: String, email: String, password: String)
     case loginUser(email: String, password: String)
     case currentUser(token: String)
+    case movie
+    case likeMovie(id: String, token: String)
+    case unLikeMovie(id: String, token: String)
+    case likedMovieList(token: String)
+    case updateUser(token: String, name: String, surname: String, email: String)
 }
 
 // MARK: - EndpointProtocol Conformance
@@ -63,25 +68,43 @@ extension Endpoint: EndpointProtocol {
             return "/api/auth/login"
         case .currentUser:
             return "/api/auth/me"
+        case .movie:
+            return "/api/movies"
+        case .likeMovie(let id, _):
+            return "/api/movies/like/\(id)"
+        case .unLikeMovie(let id, _):
+            return "/api/movies/unlike/\(id)"
+        case .likedMovieList:
+            return "/api/users/liked-movies"
+        case .updateUser:
+            return "/api/users/profile"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .registerUser, .loginUser:
+        case .registerUser, .loginUser, .likeMovie, .unLikeMovie:
             return .post
-        case .currentUser:
+        case .currentUser, .movie, .likedMovieList:
             return .get
+        case .updateUser:
+            return .put
         }
     }
     
     var headers: [String: String] {
         switch self {
-        case .currentUser(let token):
+        case .currentUser(let token), .likeMovie(_, let token), .unLikeMovie(_, let token), .likedMovieList(let token):
             return [
                 "Authorization": "Bearer \(token)",
                 "Accept": "application/json"
             ]
+        case .updateUser(let token, _, _, _):
+            return [
+                "Authorization": "Bearer \(token)",
+                "Content-Type": "application/json"
+            ]
+
         default:
             return [
                 "Content-Type": "application/json",
@@ -104,15 +127,20 @@ extension Endpoint: EndpointProtocol {
                 "email": email,
                 "password": password
             ]
-        case .currentUser(token: let token):
+        case .movie, .likeMovie, .unLikeMovie, .likedMovieList, .currentUser:
             return nil
+        case .updateUser(token: _, name: let name, surname: let surname, email: let email):
+            return [
+                "name": name,
+                "surname": surname,
+                "email": email
+            ]
         }
     }
-
     var queryItems: [URLQueryItem]? {
         return nil
     }
-
+    
     func makeRequest() -> URLRequest {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
